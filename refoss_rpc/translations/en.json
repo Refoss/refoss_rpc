@@ -1,0 +1,89 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured",
+            "another_device": "Re-configuration was unsuccessful, the IP address/hostname of another Refoss device was used.",
+            "mac_address_mismatch": "The MAC address of the device does not match the one in the configuration, please reboot the device and try again.",
+            "reauth_successful": "Re-authentication was successful",
+            "reauth_unsuccessful": "Re-authentication was unsuccessful, please remove the integration and set it up again.",
+            "reconfigure_successful": "Re-configuration was successful"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "firmware_not_fully_supported": "Device not fully supported. Please contact Refoss support",
+            "invalid_auth": "Invalid authentication",
+            "mac_address_mismatch": "The MAC address of the device does not match the one in the configuration, please reboot the device and try again."
+        },
+        "flow_title": "{name}",
+        "step": {
+            "confirm_discovery": {
+                "description": "Do you want to set up the {model} at {host}?\n\ndevices that are not password protected will be added."
+            },
+            "credentials": {
+                "data": {
+                    "password": "Password"
+                },
+                "data_description": {
+                    "password": "Password for access to the device."
+                }
+            },
+            "reauth_confirm": {
+                "data": {
+                    "password": "Password"
+                },
+                "data_description": {
+                    "password": "Password for access to the device."
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Host"
+                },
+                "data_description": {
+                    "host": "The hostname or IP address of the Refoss device to connect to."
+                },
+                "description": "Update configuration for {device_name}.\n\nBefore setup, devices must be connected to the network."
+            },
+            "user": {
+                "data": {
+                    "host": "Host"
+                },
+                "data_description": {
+                    "host": "The hostname or IP address of the Refoss device to connect to."
+                },
+                "description": "Before setup, devices must be connected to the network.\n\nThis path can be configured for refoss product models including R11, etc. \n\nFor more information, please refer to 'Help'."
+            }
+        }
+    },
+    "device_automation": {
+        "trigger_subtype": {
+            "button1": "First button"
+        },
+        "trigger_type": {
+            "btn_down": "{subtype} button down",
+            "btn_up": "{subtype} button up",
+            "double_push": "{subtype} double push",
+            "long_push": "{subtype} long push",
+            "single_push": "{subtype} single push",
+            "triple_push": "{subtype} triple push"
+        }
+    },
+    "entity": {
+        "event": {
+            "input": {
+                "state_attributes": {
+                    "event_type": {
+                        "state": {
+                            "btn_down": "Button down",
+                            "btn_up": "Button up",
+                            "double_push": "Double push",
+                            "long_push": "Long push",
+                            "single_push": "Single push",
+                            "triple_push": "Triple push"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
