@@ -1,20 +1,20 @@
 {
-  "domain": "refoss_rpc",
-  "name": "Refoss RPC",
   "codeowners": ["@ashionky"],
   "config_flow": true,
+  "domain": "refoss_rpc",
   "documentation": "https://github.com/Refoss/refoss_rpc/blob/main/README.md",
   "integration_type": "device",
   "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Refoss/refoss_rpc/issues",
   "loggers": ["aiorefoss"],
+  "name": "Refoss RPC",
   "quality_scale": "bronze",
   "requirements": ["aiorefoss==1.0.1"],
+  "version": "1.0.1",
   "zeroconf": [
     {
-      "type": "_http._tcp.local.",
-      "name": "refoss*"
+      "name": "refoss*",
+      "type": "_http._tcp.local."
     }
-  ],
-  "issue_tracker": "https://github.com/Refoss/refoss_rpc/issues",
-  "version": "1.0.1"
+  ]
 }
