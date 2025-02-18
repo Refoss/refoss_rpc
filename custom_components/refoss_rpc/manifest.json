@@ -3,7 +3,7 @@
   "name": "Refoss RPC",
   "codeowners": ["@ashionky"],
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/refoss_rpc",
+  "documentation": "https://github.com/Refoss/refoss_rpc/blob/main/README.md",
   "integration_type": "device",
   "iot_class": "local_push",
   "loggers": ["aiorefoss"],
@@ -15,5 +15,6 @@
       "name": "refoss*"
     }
   ],
+  "issue_tracker": "https://github.com/Refoss/refoss_rpc/issues",
   "version": "1.0.1"
 }
