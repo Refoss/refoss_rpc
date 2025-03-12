@@ -51,7 +51,7 @@
                 "data_description": {
                     "host": "The hostname or IP address of the Refoss device to connect to."
                 },
-                "description": "Before setup, devices must be connected to the network.\n\nThis path can be configured for refoss product models including R11, etc. \n\nFor more information, please refer to 'Help'."
+                "description": "Before setup, devices must be connected to the network.\n\nThis path can be configured for Refoss product models including R11, etc. \n\nFor more information, please refer to 'Help'."
             }
         }
     },

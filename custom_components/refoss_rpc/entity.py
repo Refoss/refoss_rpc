@@ -39,8 +39,6 @@ def async_setup_entry_refoss(
     if not coordinator.device.initialized:
         return
 
-    polling_coordinator = config_entry.runtime_data.poll_coordinator
-
     entities = []
     for sensor_id in sensors:
         description = sensors[sensor_id]
@@ -63,10 +61,6 @@ def async_setup_entry_refoss(
                 domain = sensor_class.__module__.split(".")[-1]
                 unique_id = f"{coordinator.mac}-{key}-{sensor_id}"
                 async_remove_refoss_entity(hass, domain, unique_id)
-            elif description.use_polling_coordinator:
-                entities.append(
-                    sensor_class(polling_coordinator, key, sensor_id, description)
-                )
             else:
                 entities.append(sensor_class(coordinator, key, sensor_id, description))
     if not entities:
@@ -84,7 +78,6 @@ class RefossEntityDescription(EntityDescription):
 
     value: Callable[[Any, Any], Any] | None = None
     removal_condition: Callable[[dict, dict, str], bool] | None = None
-    use_polling_coordinator: bool = False
     supported: Callable = lambda _: False
 
 
