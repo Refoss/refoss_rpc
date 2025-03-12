@@ -37,7 +37,7 @@ INPUTS_EVENTS_SUBTYPES: Final = {
 UPTIME_DEVIATION: Final = 5
 
 # Time to wait before reloading entry when device config change
-ENTRY_RELOAD_COOLDOWN = 60
+ENTRY_RELOAD_COOLDOWN = 30
 
 
 OTA_BEGIN = "ota_begin"
