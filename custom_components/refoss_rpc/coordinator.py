@@ -42,8 +42,7 @@ from .const import (
     OTA_ERROR,
     OTA_PROGRESS,
     OTA_SUCCESS,
-    REFOSS_RECONNECT_INTERVAL,
-    REFOSS_SENSORS_POLLING_INTERVAL,
+    REFOSS_CHECK_INTERVAL,
 )
 from .utils import get_host, update_device_fw_info
 
@@ -54,7 +53,6 @@ class RefossEntryData:
 
     platforms: list[Platform]
     coordinator: RefossCoordinator | None = None
-    poll_coordinator: RefossPollingCoordinator | None = None
 
 
 RefossConfigEntry = ConfigEntry[RefossEntryData]
@@ -174,7 +172,7 @@ class RefossCoordinator(RefossCoordinatorBase):
     ) -> None:
         """Initialize the Refoss coordinator."""
         self.entry = entry
-        super().__init__(hass, entry, device, REFOSS_RECONNECT_INTERVAL)
+        super().__init__(hass, entry, device, REFOSS_CHECK_INTERVAL)
 
         self.connected = False
         self._connection_lock = asyncio.Lock()
@@ -255,11 +253,22 @@ class RefossCoordinator(RefossCoordinatorBase):
         """Fetch data."""
         if self.hass.is_stopping:
             return
+
         async with self._connection_lock:
-            if self.device.connected:  # Already connected
+            if not self.device.connected:
+                if not await self._async_device_connect_task():
+                    raise UpdateFailed("Device reconnect error")
                 return
-            if not await self._async_device_connect_task():
-                raise UpdateFailed("Device reconnect error")
+        try:
+            LOGGER.debug("Polling Refoss  Device - %s", self.name)
+            await self.device.poll()
+        except DeviceConnectionError as err:
+            raise UpdateFailed(f"Device disconnected: {err!r}") from err
+        except RpcCallError as err:
+            raise UpdateFailed(f"RPC call failed: {err!r}") from err
+        except InvalidAuthError:
+            await self.async_shutdown_device_and_start_reauth()
+            return
 
     async def _async_disconnected(self, reconnect: bool) -> None:
         """Handle device disconnected."""
@@ -344,29 +353,6 @@ class RefossCoordinator(RefossCoordinatorBase):
                 LOGGER.debug("Error during shutdown for device %s: %s", self.name, err)
                 return
         await self._async_disconnected(False)
-
-
-class RefossPollingCoordinator(RefossCoordinatorBase):
-    """Polling coordinator for a Refoss  device."""
-
-    def __init__(
-        self, hass: HomeAssistant, entry: RefossConfigEntry, device: RpcDevice
-    ) -> None:
-        """Initialize the  polling coordinator."""
-        super().__init__(hass, entry, device, REFOSS_SENSORS_POLLING_INTERVAL)
-
-    async def _async_update_data(self) -> None:
-        """Fetch data."""
-        if not self.device.connected:
-            raise UpdateFailed("Device disconnected")
-
-        LOGGER.debug("Polling Refoss  Device - %s", self.name)
-        try:
-            await self.device.poll()
-        except (DeviceConnectionError, RpcCallError) as err:
-            raise UpdateFailed(f"Device disconnected: {err!r}") from err
-        except InvalidAuthError:
-            await self.async_shutdown_device_and_start_reauth()
 
 
 def get_refoss_coordinator_by_device_id(

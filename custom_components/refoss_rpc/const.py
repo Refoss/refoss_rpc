@@ -9,12 +9,8 @@ DOMAIN: Final = "refoss_rpc"
 
 LOGGER: Logger = getLogger(__package__)
 
-
-# Refresh interval for polling
-REFOSS_SENSORS_POLLING_INTERVAL: Final = 60
-
-# Reconnect interval for  devices
-REFOSS_RECONNECT_INTERVAL = 60
+#Check interval for  devices
+REFOSS_CHECK_INTERVAL = 60
 
 
 # Button Click events for devices
@@ -41,7 +37,7 @@ INPUTS_EVENTS_SUBTYPES: Final = {
 UPTIME_DEVIATION: Final = 5
 
 # Time to wait before reloading entry when device config change
-ENTRY_RELOAD_COOLDOWN = 60
+ENTRY_RELOAD_COOLDOWN = 30
 
 
 OTA_BEGIN = "ota_begin"

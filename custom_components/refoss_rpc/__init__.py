@@ -31,7 +31,6 @@ from .coordinator import (
     RefossConfigEntry,
     RefossCoordinator,
     RefossEntryData,
-    RefossPollingCoordinator,
 )
 
 PLATFORMS: Final = [
@@ -73,7 +72,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: RefossConfigEntry) -> bo
 
     runtime_data.coordinator = RefossCoordinator(hass, entry, device)
     runtime_data.coordinator.async_setup()
-    runtime_data.poll_coordinator = RefossPollingCoordinator(hass, entry, device)
     await hass.config_entries.async_forward_entry_setups(entry, runtime_data.platforms)
 
     return True
