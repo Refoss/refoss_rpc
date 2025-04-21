@@ -24,6 +24,7 @@
 
 ## Supported device models
 
-| Model                               | Version            |             
-|-------------------------------------|--------------------|
-| `Refoss Smart Wi-Fi Switch, R11`    | `all`              |
+| Model                            | Version            |             
+|----------------------------------|--------------------|
+| `Refoss Smart Wi-Fi Switch, R11` | `all`              |
+| `Refoss Smart Wi-Fi Plug, P11S`  | `all`              |
