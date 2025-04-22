@@ -92,7 +92,6 @@ REFOSS_SENSORS: Final = {
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=False,
     ),
     "rssi": RefossSensorDescription(
         key="wifi",
@@ -103,7 +102,6 @@ REFOSS_SENSORS: Final = {
         state_class=SensorStateClass.MEASUREMENT,
         removal_condition=is_refoss_wifi_stations_disabled,
         entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=False,
     ),
     "uptime": RefossSensorDescription(
         key="sys",
@@ -112,7 +110,6 @@ REFOSS_SENSORS: Final = {
         value=get_device_uptime,
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=False,
     ),
 }
 

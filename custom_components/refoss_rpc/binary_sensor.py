@@ -43,7 +43,6 @@ REFOSS_BINARY_SENSORS: Final = {
         sub_key="connected",
         name="Cloud",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
-        entity_registry_enabled_default=False,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "overtemp": RefossBinarySensorDescription(
@@ -96,7 +95,6 @@ REFOSS_BINARY_SENSORS: Final = {
         sub_key="restart_required",
         name="Restart required",
         device_class=BinarySensorDeviceClass.PROBLEM,
-        entity_registry_enabled_default=False,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
 }
