@@ -28,3 +28,4 @@
 |----------------------------------|--------------------|
 | `Refoss Smart Wi-Fi Switch, R11` | `all`              |
 | `Refoss Smart Wi-Fi Plug, P11S`  | `all`              |
+| `Refoss Smart Wi-Fi Switch, R21` | `all`              |
