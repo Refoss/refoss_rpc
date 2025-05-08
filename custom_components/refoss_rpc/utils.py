@@ -52,7 +52,7 @@ def get_refoss_channel_name(device: RpcDevice, key: str) -> str:
     if entity_name is None:
         channel = key.split(":")[0]
         channel_id = key.split(":")[-1]
-        if key.startswith(("input:", "switch:")):
+        if key.startswith(("input:", "switch:","cover:")):
             return f"{device_name} {channel.title()} {channel_id}"
         return device_name
 
