@@ -84,6 +84,6 @@ class RefossCover(RefossEntity, CoverEntity):
             "Cover.Pos.Set", {"id": self._id, "pos": kwargs[ATTR_POSITION]}
         )
 
-    async def async_stop_cover(self, **_kwargs: Any) -> None:
+    async def async_stop_cover(self, **kwargs: Any) -> None:
         """Stop the cover."""
         await self.call_rpc("Cover.Action.Set", {"id": self._id, "action": "stop"})

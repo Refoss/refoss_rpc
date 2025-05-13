@@ -120,6 +120,7 @@ REFOSS_SENSORS: Final = {
         value=get_device_uptime,
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
 }
 
