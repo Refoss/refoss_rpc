@@ -57,7 +57,8 @@
   },
   "device_automation": {
     "trigger_subtype": {
-      "button1": "First button"
+      "button1": "First button",
+      "button2": "Second button"
     },
     "trigger_type": {
       "button_down": "{subtype} button down",
