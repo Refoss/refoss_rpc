@@ -82,10 +82,10 @@ REFOSS_SENSORS: Final = {
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "total_energy": RefossSensorDescription(
+    "energy_cover": RefossSensorDescription(
         key="cover",
         sub_key="aenergy",
-        name="Total Energy",
+        name="Energy",
         native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
         value=lambda status, _: status["total"],
         suggested_display_precision=2,
