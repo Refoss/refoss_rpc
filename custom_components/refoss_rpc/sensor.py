@@ -82,7 +82,7 @@ REFOSS_SENSORS: Final = {
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "energy_cover": RefossSensorDescription(
+    "cover_energy": RefossSensorDescription(
         key="cover",
         sub_key="aenergy",
         name="Energy",
