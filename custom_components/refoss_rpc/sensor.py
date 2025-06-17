@@ -82,6 +82,16 @@ REFOSS_SENSORS: Final = {
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
+    "energy_cover": RefossSensorDescription(
+        key="cover",
+        sub_key="aenergy",
+        name="Energy",
+        native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
+        value=lambda status, _: status["total"],
+        suggested_display_precision=2,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL,
+    ),
     "temperature": RefossSensorDescription(
         key="sys",
         sub_key="temperature",
@@ -110,6 +120,7 @@ REFOSS_SENSORS: Final = {
         value=get_device_uptime,
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
 }
 

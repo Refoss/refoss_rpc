@@ -53,7 +53,7 @@ def async_setup_entry_refoss(
             ] and not description.supported(coordinator.device.status[key]):
                 continue
 
-            # Filter and remove entities that according to settings/status
+            # Filter and remove entities that according to config/status
             # should not create an entity
             if description.removal_condition and description.removal_condition(
                 coordinator.device.config, coordinator.device.status, key

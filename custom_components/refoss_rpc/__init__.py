@@ -36,6 +36,7 @@ from .coordinator import (
 PLATFORMS: Final = [
     Platform.BINARY_SENSOR,
     Platform.BUTTON,
+    Platform.COVER,
     Platform.EVENT,
     Platform.SENSOR,
     Platform.SWITCH,

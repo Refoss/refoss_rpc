@@ -32,6 +32,7 @@ INPUTS_EVENTS_TYPES: Final = {
 
 INPUTS_EVENTS_SUBTYPES: Final = {
     "button1": 1,
+    "button2": 2,
 }
 
 UPTIME_DEVIATION: Final = 5
