@@ -52,8 +52,12 @@ def get_refoss_channel_name(device: RpcDevice, key: str) -> str:
     if entity_name is None:
         channel = key.split(":")[0]
         channel_id = key.split(":")[-1]
-        if key.startswith(("input:", "switch:","cover:")):
+        if key.startswith(("input:", "switch:", "cover:", "em:")):
             return f"{device_name} {channel.title()} {channel_id}"
+
+        if key.startswith(("emmerge:")):
+            return f"{device_name} {channel.title()}"
+
         return device_name
 
     return entity_name
@@ -143,6 +147,39 @@ def is_refoss_wifi_stations_disabled(
         return True
 
     return False
+
+
+def merge_channel_get_status(_status: dict[str, Any], key: str, attr: str) -> Any:
+    """
+    Merge channel attributes. If the key starts with 'emmerge:', sum the attribute values of the corresponding bits.
+
+    :param _status: Device status dictionary
+    :param key: Key name
+    :param attr: Attribute name
+    :return: Merged attribute value or None
+    """
+    if not key.startswith("emmerge:"):
+        return None
+
+    try:
+        # Extract and convert the number
+        num = int(key.split(":")[1])
+    except (IndexError, ValueError):
+        LOGGER.error("Failed to extract or convert number from key: %s", key)
+        return None
+
+    # Find the indices of bits with a value of 1 in the binary representation
+    bit_positions = [i for i in range(num.bit_length()) if num & (1 << i)]
+
+    val = 0
+    for bit in bit_positions:
+        status_key = f"em:{bit+1}"
+        if status_key in _status and attr in _status[status_key]:
+            val += _status[status_key][attr]
+        else:
+            LOGGER.warning("Missing key %s or attribute %s in status", status_key, attr)
+
+    return val
 
 
 def get_host(host: str) -> str:
