@@ -44,15 +44,14 @@ class RefossCover(RefossEntity, CoverEntity):
         """Initialize  cover."""
         super().__init__(coordinator, f"cover:{_id}")
         self._id = _id
-        if self.status["pos_control"]:
+        if self.status["cali_state"] == "success":
             self._attr_supported_features |= CoverEntityFeature.SET_POSITION
 
     @property
     def current_cover_position(self) -> int | None:
         """Position of the cover."""
-        if not self.status["pos_control"]:
+        if not self.status["cali_state"] or self.status["cali_state"] != "success":
             return None
-
         return cast(int, self.status["current_pos"])
 
     @property

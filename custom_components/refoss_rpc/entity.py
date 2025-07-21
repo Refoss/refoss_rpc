@@ -22,6 +22,7 @@ from .utils import (
     async_remove_refoss_entity,
     get_refoss_entity_name,
     get_refoss_key_instances,
+    merge_channel_get_status,
 )
 
 
@@ -35,38 +36,51 @@ def async_setup_entry_refoss(
 ) -> None:
     """Set up entities for  Refoss."""
     coordinator = config_entry.runtime_data.coordinator
-    assert coordinator
-    if not coordinator.device.initialized:
+    # If the device is not initialized, return directly
+    if not coordinator or not coordinator.device.initialized:
         return
 
-    entities = []
-    for sensor_id in sensors:
-        description = sensors[sensor_id]
-        key_instances = get_refoss_key_instances(
-            coordinator.device.status, description.key
-        )
+    device_status = coordinator.device.status
+    device_config = coordinator.device.config
+    mac = coordinator.mac
+    entities: list[Any] = []
+
+    for sensor_id, description in sensors.items():
+        key_instances = get_refoss_key_instances(device_status, description.key)
 
         for key in key_instances:
-            # Filter non-existing sensors
-            if description.sub_key not in coordinator.device.status[
-                key
-            ] and not description.supported(coordinator.device.status[key]):
+            key_status = device_status.get(key)
+            if key_status is None:
                 continue
 
-            # Filter and remove entities that according to config/status
-            # should not create an entity
-            if description.removal_condition and description.removal_condition(
-                coordinator.device.config, coordinator.device.status, key
+            # Filter out sensors that are not supported or do not match the configuration
+            if (
+                not key.startswith("emmerge:")
+                and description.sub_key not in key_status
+                and not description.supported(key_status)
             ):
-                domain = sensor_class.__module__.split(".")[-1]
-                unique_id = f"{coordinator.mac}-{key}-{sensor_id}"
+                continue
+
+            # Filter and remove entities that should not be created according to the configuration/status
+            if description.removal_condition and description.removal_condition(
+                device_config, device_status, key
+            ):
+                try:
+                    domain = sensor_class.__module__.split(".")[-1]
+                except AttributeError:
+                    LOGGER.error(
+                        "Failed to get module name from sensor_class for sensor_id %s and key %s",
+                        sensor_id,
+                        key,
+                    )
+                    continue
+                unique_id = f"{mac}-{key}-{sensor_id}"
                 async_remove_refoss_entity(hass, domain, unique_id)
             else:
                 entities.append(sensor_class(coordinator, key, sensor_id, description))
-    if not entities:
-        return
 
-    async_add_entities(entities)
+    if entities:
+        async_add_entities(entities)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -101,11 +115,13 @@ class RefossEntity(CoordinatorEntity[RefossCoordinator]):
         return super().available and (coordinator.device.initialized)
 
     @property
-    def status(self) -> dict:
+    def status(self) -> dict | None:
         """Device status by entity key."""
-        return cast(dict, self.coordinator.device.status[self.key])
+        device_status = self.coordinator.device.status.get(self.key)
+        if device_status is None:
+            LOGGER.debug("Device status not found for key: %s", self.key)
+        return device_status
 
-    # pylint: disable-next=hass-missing-super-call
     async def async_added_to_hass(self) -> None:
         """When entity is added to HASS."""
         self.async_on_remove(self.coordinator.async_add_listener(self._update_callback))
@@ -164,18 +180,51 @@ class RefossAttributeEntity(RefossEntity, Entity):
         self._last_value = None
 
     @property
-    def sub_status(self) -> Any:
-        """Device status by entity key."""
-        return self.status[self.entity_description.sub_key]
+    def sub_status(self) -> Any | None:
+        """Get the sub - status of the device by entity key.
+
+        Returns the value corresponding to the sub - key in the device status.
+        If the device status is None or the sub - key does not exist, returns None.
+        """
+        device_status = self.status
+        if device_status is None:
+            LOGGER.debug("Device status is None for entity %s", self.name)
+            return None
+        sub_key = self.entity_description.sub_key
+        sub_status = device_status.get(sub_key)
+        return sub_status
 
     @property
     def attribute_value(self) -> StateType:
         """Value of sensor."""
-        if self.entity_description.value is not None:
-            self._last_value = self.entity_description.value(
-                self.status.get(self.entity_description.sub_key), self._last_value
-            )
-        else:
-            self._last_value = self.sub_status
+        try:
+            if self.key.startswith("emmerge:"):
+                # Call the merge channel attributes function
+                return merge_channel_get_status(
+                    self.coordinator.device.status,
+                    self.key,
+                    self.entity_description.sub_key,
+                )
 
-        return self._last_value
+            # Reduce repeated calls and get the sub-status
+            sub_status = self.sub_status
+
+            if self.entity_description.value is not None:
+                # Call the custom value processing function
+                self._last_value = self.entity_description.value(
+                    sub_status, self._last_value
+                )
+            else:
+                self._last_value = sub_status
+
+            return self._last_value
+        except Exception as e:
+            # Log the exception
+            LOGGER.error(
+                "Error getting attribute value for entity %s, key %s, attribute %s: %s",
+                self.name,
+                self.key,
+                self.attribute,
+                str(e),
+            )
+            return None

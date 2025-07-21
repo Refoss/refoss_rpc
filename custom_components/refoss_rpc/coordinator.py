@@ -238,7 +238,8 @@ class RefossCoordinator(RefossCoordinatorBase):
             if event_type is None:
                 continue
 
-            if event_type in ("config_changed"):
+            RELOAD_EVENTS = {"config_changed", "emmerge_change", "cfg_change"}
+            if event_type in RELOAD_EVENTS:
                 LOGGER.info(
                     "Config for %s changed, reloading entry in %s seconds",
                     self.name,
