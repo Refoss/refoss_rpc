@@ -25,8 +25,7 @@ from homeassistant.const import (
     Platform,
 )
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -72,7 +71,7 @@ class RefossCoordinatorBase(DataUpdateCoordinator[None]):
         """Initialize the Refoss device coordinator."""
         self.entry = entry
         self.device = device
-        self.device_id: str | None = None
+        self.device_id: str
         device_name = device.name if device.initialized else entry.title
         interval_td = timedelta(seconds=update_interval)
         self._came_online_once = False

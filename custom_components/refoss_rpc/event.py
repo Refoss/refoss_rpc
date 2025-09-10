@@ -14,7 +14,7 @@ from homeassistant.components.event import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import INPUTS_EVENTS_TYPES
@@ -48,7 +48,7 @@ REFOSS_EVENT: Final = RefossEventDescription(
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: RefossConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up event for device."""
     entities: list[RefossEvent] = []

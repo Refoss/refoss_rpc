@@ -55,7 +55,7 @@ def get_refoss_channel_name(device: RpcDevice, key: str) -> str:
         if key.startswith(("input:", "switch:", "cover:", "em:")):
             return f"{device_name} {channel.title()} {channel_id}"
 
-        if key.startswith(("emmerge:")):
+        if key.startswith("emmerge:"):
             return f"{device_name} {channel.title()}"
 
         return device_name
@@ -150,8 +150,7 @@ def is_refoss_wifi_stations_disabled(
 
 
 def merge_channel_get_status(_status: dict[str, Any], key: str, attr: str) -> Any:
-    """
-    Merge channel attributes. If the key starts with 'emmerge:', sum the attribute values of the corresponding bits.
+    """Merge channel attributes. If the key starts with 'emmerge:', sum the attribute values of the corresponding bits.
 
     :param _status: Device status dictionary
     :param key: Key name
@@ -173,7 +172,7 @@ def merge_channel_get_status(_status: dict[str, Any], key: str, attr: str) -> An
 
     val = 0
     for bit in bit_positions:
-        status_key = f"em:{bit+1}"
+        status_key = f"em:{bit + 1}"
         if status_key in _status and attr in _status[status_key]:
             val += _status[status_key][attr]
         else:

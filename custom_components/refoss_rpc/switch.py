@@ -6,7 +6,7 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import RefossConfigEntry, RefossCoordinator
 from .entity import RefossEntity
@@ -16,7 +16,7 @@ from .utils import get_refoss_key_ids
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: RefossConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up switch for device."""
     coordinator = config_entry.runtime_data.coordinator

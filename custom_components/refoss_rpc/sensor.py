@@ -21,7 +21,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
 from .coordinator import RefossConfigEntry, RefossCoordinator
@@ -167,7 +167,7 @@ REFOSS_SENSORS: Final = {
         sub_key="month_ret_energy",
         name="This Month Return Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-        value=lambda status, _: None if status is None else float(status),
+        value=lambda status, _: None if status is None else float(abs(status)),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -185,9 +185,9 @@ REFOSS_SENSORS: Final = {
     "em_week_ret_energy": RefossSensorDescription(
         key="em",
         sub_key="week_ret_energy",
-        name="This Week Retrun Energy",
+        name="This Week Return Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-        value=lambda status, _: None if status is None else float(status),
+        value=lambda status, _: None if status is None else float(abs(status)),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -207,7 +207,7 @@ REFOSS_SENSORS: Final = {
         sub_key="day_ret_energy",
         name="Today Return Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-        value=lambda status, _: None if status is None else float(status),
+        value=lambda status, _: None if status is None else float(abs(status)),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -226,6 +226,7 @@ REFOSS_SENSORS: Final = {
         sub_key="power",
         name="Power",
         native_unit_of_measurement=UnitOfPower.WATT,
+        value=lambda status, _: None if status is None else float(status),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -235,6 +236,7 @@ REFOSS_SENSORS: Final = {
         sub_key="current",
         name="Current",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+        value=lambda status, _: None if status is None else float(status),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -244,6 +246,7 @@ REFOSS_SENSORS: Final = {
         sub_key="month_energy",
         name="This Month Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(status),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -253,6 +256,7 @@ REFOSS_SENSORS: Final = {
         sub_key="month_ret_energy",
         name="This Month Return Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(abs(status)),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -262,6 +266,7 @@ REFOSS_SENSORS: Final = {
         sub_key="week_energy",
         name="This Week Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(status),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -269,8 +274,9 @@ REFOSS_SENSORS: Final = {
     "emmerge_week_ret_energy": RefossSensorDescription(
         key="emmerge",
         sub_key="week_ret_energy",
-        name="This Week Retrun Energy",
+        name="This Week Return Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(abs(status)),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -280,6 +286,7 @@ REFOSS_SENSORS: Final = {
         sub_key="day_energy",
         name="Today Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(status),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -289,6 +296,7 @@ REFOSS_SENSORS: Final = {
         sub_key="day_ret_energy",
         name="Today Return Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(abs(status)),
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -299,7 +307,7 @@ REFOSS_SENSORS: Final = {
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: RefossConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up sensors for device."""
     coordinator = config_entry.runtime_data.coordinator

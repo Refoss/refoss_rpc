@@ -115,15 +115,13 @@ class RefossEntity(CoordinatorEntity[RefossCoordinator]):
         return super().available and (coordinator.device.initialized)
 
     @property
-    def status(self) -> dict | None:
+    def status(self) -> dict:
         """Device status by entity key."""
-        device_status = self.coordinator.device.status.get(self.key)
-        if device_status is None:
-            LOGGER.debug("Device status not found for key: %s", self.key)
-        return device_status
+        return cast(dict, self.coordinator.device.status[self.key])
 
     async def async_added_to_hass(self) -> None:
         """When entity is added to HASS."""
+        await super().async_added_to_hass()
         self.async_on_remove(self.coordinator.async_add_listener(self._update_callback))
 
     @callback
@@ -180,19 +178,9 @@ class RefossAttributeEntity(RefossEntity, Entity):
         self._last_value = None
 
     @property
-    def sub_status(self) -> Any | None:
-        """Get the sub - status of the device by entity key.
-
-        Returns the value corresponding to the sub - key in the device status.
-        If the device status is None or the sub - key does not exist, returns None.
-        """
-        device_status = self.status
-        if device_status is None:
-            LOGGER.debug("Device status is None for entity %s", self.name)
-            return None
-        sub_key = self.entity_description.sub_key
-        sub_status = device_status.get(sub_key)
-        return sub_status
+    def sub_status(self) -> Any:
+        """Device status by entity key."""
+        return self.status[self.entity_description.sub_key]
 
     @property
     def attribute_value(self) -> StateType:
@@ -200,27 +188,27 @@ class RefossAttributeEntity(RefossEntity, Entity):
         try:
             if self.key.startswith("emmerge:"):
                 # Call the merge channel attributes function
-                return merge_channel_get_status(
+                val = merge_channel_get_status(
                     self.coordinator.device.status,
                     self.key,
                     self.entity_description.sub_key,
                 )
+                if self.entity_description.value is not None:
+                    return self.entity_description.value(val, self._last_value)
 
-            # Reduce repeated calls and get the sub-status
-            sub_status = self.sub_status
+                return val
+
+            if self.sub_status is None:
+                return None
 
             if self.entity_description.value is not None:
-                # Call the custom value processing function
-                self._last_value = self.entity_description.value(
-                    sub_status, self._last_value
-                )
-            else:
-                self._last_value = sub_status
+                return self.entity_description.value(self.sub_status, self._last_value)
 
-            return self._last_value
-        except Exception as e:
+            if self.entity_description.value is None:
+                return self.sub_status
+        except (KeyError, TypeError, ValueError) as e:
             # Log the exception
-            LOGGER.error(
+            LOGGER.debug(
                 "Error getting attribute value for entity %s, key %s, attribute %s: %s",
                 self.name,
                 self.key,

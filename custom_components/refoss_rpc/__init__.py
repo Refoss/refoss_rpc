@@ -27,11 +27,7 @@ from homeassistant.exceptions import (
 )
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .coordinator import (
-    RefossConfigEntry,
-    RefossCoordinator,
-    RefossEntryData,
-)
+from .coordinator import RefossConfigEntry, RefossCoordinator, RefossEntryData
 
 PLATFORMS: Final = [
     Platform.BINARY_SENSOR,

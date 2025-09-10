@@ -9,7 +9,7 @@ DOMAIN: Final = "refoss_rpc"
 
 LOGGER: Logger = getLogger(__package__)
 
-#Check interval for  devices
+# Check interval for  devices
 REFOSS_CHECK_INTERVAL = 60
 
 

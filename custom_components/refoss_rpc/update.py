@@ -18,7 +18,7 @@ from homeassistant.components.update import (
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import OTA_BEGIN, OTA_ERROR, OTA_PROGRESS, OTA_SUCCESS
 from .coordinator import RefossConfigEntry, RefossCoordinator
@@ -53,7 +53,7 @@ REFOSS_UPDATES: Final = {
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: RefossConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up update  for device."""
     async_setup_entry_refoss(
