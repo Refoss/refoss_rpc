@@ -25,7 +25,7 @@ from homeassistant.const import (
     Platform,
 )
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -124,17 +124,6 @@ class RefossCoordinatorBase(DataUpdateCoordinator[None]):
             configuration_url=f"http://{get_host(self.entry.data[CONF_HOST])}",
         )
         self.device_id = device_entry.id
-        self.remove_old_entity()
-
-    def remove_old_entity(self) -> None:
-        """Remove old entity when reload."""
-        entity_reg = er.async_get(self.hass)
-        entities = er.async_entries_for_device(
-            registry=entity_reg, device_id=self.device_id
-        )
-        for entity in entities:
-            LOGGER.debug("Removing old entity: %s", entity.entity_id)
-            entity_reg.async_remove(entity.entity_id)
 
     async def shutdown(self) -> None:
         """Shutdown the coordinator."""
