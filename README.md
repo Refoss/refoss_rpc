@@ -52,3 +52,4 @@ As soon as HomeAssistant is restarted, you can proceed with __component setup__.
 | `Refoss Smart Wi-Fi Plug, P11S`     | `all`              |
 | `Refoss Smart Wi-Fi Switch, R21`    | `all`              |
 | `Refoss Smart Energy Monito, EM06P` | `all`              |
+| `Refoss Smart Energy Monito, EM16P` | `all`              |
