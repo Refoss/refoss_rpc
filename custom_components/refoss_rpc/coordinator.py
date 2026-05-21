@@ -58,6 +58,9 @@ class RefossEntryData:
 RefossConfigEntry = ConfigEntry[RefossEntryData]
 
 
+RELOAD_EVENTS = {"config_changed", "emmerge_change", "cfg_change"}
+
+
 class RefossCoordinatorBase(DataUpdateCoordinator[None]):
     """Coordinator for a Refoss device."""
 
@@ -171,7 +174,6 @@ class RefossCoordinator(RefossCoordinatorBase):
         self, hass: HomeAssistant, entry: RefossConfigEntry, device: RpcDevice
     ) -> None:
         """Initialize the Refoss coordinator."""
-        self.entry = entry
         super().__init__(hass, entry, device, REFOSS_CHECK_INTERVAL)
 
         self.connected = False
@@ -226,7 +228,6 @@ class RefossCoordinator(RefossCoordinatorBase):
             if event_type is None:
                 continue
 
-            RELOAD_EVENTS = {"config_changed", "emmerge_change", "cfg_change"}
             if event_type in RELOAD_EVENTS:
                 LOGGER.info(
                     "Config for %s changed, reloading entry in %s seconds",

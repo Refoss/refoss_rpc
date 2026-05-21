@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-import logging
 from typing import Any, Final, cast
 
 from aiorefoss.exceptions import DeviceConnectionError, InvalidAuthError, RpcCallError
@@ -20,15 +19,13 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import OTA_BEGIN, OTA_ERROR, OTA_PROGRESS, OTA_SUCCESS
+from .const import OTA_BEGIN, OTA_ERROR, OTA_PROGRESS, OTA_SUCCESS, LOGGER
 from .coordinator import RefossConfigEntry, RefossCoordinator
 from .entity import (
     RefossAttributeEntity,
     RefossEntityDescription,
     async_setup_entry_refoss,
 )
-
-LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -90,17 +87,17 @@ class RefossUpdateEntity(RefossAttributeEntity, UpdateEntity):
 
     @callback
     def firmware_upgrade_callback(self, event: dict[str, Any]) -> None:
-        """Handle device firmware upgrade  progress."""
-        if self.in_progress is not False:
-            event_type = event["event"]
-            if event_type == OTA_BEGIN:
-                self._ota_progress_percentage = 0
-            elif event_type == OTA_PROGRESS:
-                self._ota_progress_percentage = event["progress_percent"]
-            elif event_type in (OTA_ERROR, OTA_SUCCESS):
-                self._ota_in_progress = False
-                self._ota_progress_percentage = None
-            self.async_write_ha_state()
+        """Handle device firmware upgrade progress."""
+        event_type = event["event"]
+        if event_type == OTA_BEGIN:
+            self._ota_in_progress = True
+            self._ota_progress_percentage = 0
+        elif event_type == OTA_PROGRESS:
+            self._ota_progress_percentage = event["progress_percent"]
+        elif event_type in (OTA_ERROR, OTA_SUCCESS):
+            self._ota_in_progress = False
+            self._ota_progress_percentage = None
+        self.async_write_ha_state()
 
     @property
     def installed_version(self) -> str | None:
@@ -117,7 +114,7 @@ class RefossUpdateEntity(RefossAttributeEntity, UpdateEntity):
         return self.installed_version
 
     @property
-    def in_progress(self) -> bool:
+    def in_progress(self) -> bool | int:
         """Update installation in progress."""
         return self._ota_in_progress
 

@@ -11,7 +11,7 @@ from aiorefoss.exceptions import DeviceConnectionError, InvalidAuthError, RpcCal
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo
-from homeassistant.helpers.entity import Entity, EntityDescription
+from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -56,8 +56,10 @@ def async_setup_entry_refoss(
             # Filter out sensors that are not supported or do not match the configuration
             if (
                 not key.startswith("emmerge:")
-                and description.sub_key not in key_status
-                and not description.supported(key_status)
+                and (
+                    description.sub_key not in key_status
+                    or not description.supported(key_status)
+                )
             ):
                 continue
 
@@ -92,7 +94,7 @@ class RefossEntityDescription(EntityDescription):
 
     value: Callable[[Any, Any], Any] | None = None
     removal_condition: Callable[[dict, dict, str], bool] | None = None
-    supported: Callable = lambda _: False
+    supported: Callable = lambda _: True
 
 
 class RefossEntity(CoordinatorEntity[RefossCoordinator]):
@@ -154,7 +156,7 @@ class RefossEntity(CoordinatorEntity[RefossCoordinator]):
             await self.coordinator.async_shutdown_device_and_start_reauth()
 
 
-class RefossAttributeEntity(RefossEntity, Entity):
+class RefossAttributeEntity(RefossEntity):
     """Helper class to represent a attribute."""
 
     entity_description: RefossEntityDescription
@@ -204,8 +206,7 @@ class RefossAttributeEntity(RefossEntity, Entity):
             if self.entity_description.value is not None:
                 return self.entity_description.value(self.sub_status, self._last_value)
 
-            if self.entity_description.value is None:
-                return self.sub_status
+            return self.sub_status
         except (KeyError, TypeError, ValueError) as e:
             # Log the exception
             LOGGER.debug(

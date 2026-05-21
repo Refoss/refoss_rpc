@@ -1,6 +1,6 @@
 {
   "domain": "refoss_rpc",
-  "name": "Refoss RPC",
+  "name": "Refoss RPC (Official Maintenance)",
   "codeowners": ["@ashionky"],
   "config_flow": true,
   "documentation": "https://github.com/Refoss/refoss_rpc/blob/main/README.md",
@@ -10,7 +10,7 @@
   "loggers": ["aiorefoss"],
   "quality_scale": "bronze",
   "requirements": ["aiorefoss==1.0.1"],
-  "version": "1.0.5",
+  "version": "1.0.6",
   "zeroconf": [
     {
       "type": "_http._tcp.local.",

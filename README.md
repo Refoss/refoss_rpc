@@ -1,55 +1,54 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-# refoss_rpc
-- Home Assistant version: 2025.2.5 or above.
-- Integrate Refoss devices that support `RPC` protocol into Home Assistant.
+# Refoss RPC (Official Maintenance)
 
-## Installation & configuration
-You can install this component in two ways: via HACS or manually.
-HACS is a nice community-maintained components manager, which allows you to install git-hub hosted components in a few clicks.
-If you have already HACS installed on your HomeAssistant, it's better to go with that.
-On the other hand, if you don't have HACS installed or if you don't plan to install it, then you can use manual installation.
+Integrate Refoss devices that support the `RPC` protocol into Home Assistant.
 
-### Option A: Installing via HACS
-If you have HACS, well, it's piece of cake!
-Just search for "Refoss" (Full name is Refoss RPC) in the default repository of HACS and it'll show up.
-Click on Install. When the installation completes, **you must restart homeassistant** in order to make it work.
-As soon as HomeAssistant is restarted, you can proceed with __component setup__.
+**Requirements**: Home Assistant 2025.2.5 or above.
 
-### Option B: Classic installation (custom_component)
-1. Download the latest zip release archive from [here](https://github.com/Refoss/refoss_rpc/releases/latest)
-1. Unzip/copy the refoss_rpc directory within the `custom_components` directory of your homeassistant installation.
-   The `custom_components` directory resides within your homeassistant configuration directory.
-   Usually, the configuration directory is within your home (`~/.homeassistant/`).
-   In other words, the configuration directory of homeassistant is where the config.yaml file is located.
-   After a correct installation, your configuration directory should look like the following.
-    ```
-    └── ...
-    └── configuration.yaml
-    └── secrects.yaml
-    └── custom_components
-        └── refoss_rpc
-            └── __init__.py
-            └── entity.py
-            └── switch.py
-            └── ...
-    ```
+## Installation
 
-   **Note**: if the custom_components directory does not exist, you need to create it.
+### Option A: Via HACS
 
-After copy-pasting the refoss_rpc directory into the custom_components folder, you need to restart HomeAssistant.
-As soon as HomeAssistant is restarted, you can proceed with __component setup__.
+1. Search for **"Refoss RPC (Official Maintenance)"** in the HACS default repository.
+2. Click **Install**.
+3. Restart Home Assistant.
+4. Proceed to [Configuration](#configuration).
+
+### Option B: Manual Installation
+
+1. Download the latest release from [GitHub Releases](https://github.com/Refoss/refoss_rpc/releases/latest).
+2. Copy the `refoss_rpc` folder into the `custom_components` directory of your Home Assistant configuration directory (where `configuration.yaml` is located).
+
+   ```
+   ~/.homeassistant/
+   ├── configuration.yaml
+   ├── secrets.yaml
+   └── custom_components/
+       └── refoss_rpc/
+           ├── __init__.py
+           ├── entity.py
+           ├── switch.py
+           └── ...
+   ```
+
+3. Restart Home Assistant.
+4. Proceed to [Configuration](#configuration).
 
 ## Configuration
-- In the HA UI go to "Configuration" -> "Integrations", click "+", search for "Refoss RPC", and select the "Refoss RPC" integration from the list.
-  Or click here: [![Start Config Flow](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=refoss_rpc)
 
-## Supported device models
+1. Navigate to **Settings** → **Devices & Services** → **Add Integration**.
+2. Search for **"Refoss RPC (Official Maintenance)"** and select it from the list.
+3. Follow the setup wizard.
 
-| Model                               | Version            |             
-|-------------------------------------|--------------------|
-| `Refoss Smart Wi-Fi Switch, R11`    | `all`              |
-| `Refoss Smart Wi-Fi Plug, P11S`     | `all`              |
-| `Refoss Smart Wi-Fi Switch, R21`    | `all`              |
-| `Refoss Smart Energy Monito, EM06P` | `all`              |
-| `Refoss Smart Energy Monito, EM16P` | `all`              |
+Or click here: [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=refoss_rpc)
+
+## Supported Devices
+
+| Model | Version |
+|-------|---------|
+| Refoss Smart Wi-Fi Switch, R11 | All |
+| Refoss Smart Wi-Fi Plug, P11S | All |
+| Refoss Smart Wi-Fi Switch, R21 | All |
+| Refoss Smart Energy Monitor, EM06P | All |
+| Refoss Smart Energy Monitor, EM16P | All |
