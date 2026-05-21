@@ -1,6 +1,6 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-# Refoss RPC (Official Maintenance)
+# Refoss RPC
 
 Integrate Refoss devices that support the `RPC` protocol into Home Assistant.
 
@@ -10,7 +10,7 @@ Integrate Refoss devices that support the `RPC` protocol into Home Assistant.
 
 ### Option A: Via HACS
 
-1. Search for **"Refoss RPC (Official Maintenance)"** in the HACS default repository.
+1. Search for **"Refoss RPC"** in the HACS default repository.
 2. Click **Install**.
 3. Restart Home Assistant.
 4. Proceed to [Configuration](#configuration).
@@ -38,7 +38,7 @@ Integrate Refoss devices that support the `RPC` protocol into Home Assistant.
 ## Configuration
 
 1. Navigate to **Settings** → **Devices & Services** → **Add Integration**.
-2. Search for **"Refoss RPC (Official Maintenance)"** and select it from the list.
+2. Search for **"Refoss RPC"** and select it from the list.
 3. Follow the setup wizard.
 
 Or click here: [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=refoss_rpc)
