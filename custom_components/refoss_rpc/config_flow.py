@@ -123,10 +123,10 @@ class RefossConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the credentials step."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            validate_data = {**user_input, CONF_USERNAME: "admin"}
+            user_input[CONF_USERNAME] = "admin"
             try:
                 device_info = await async_validate_input(
-                    self.hass, self.host, self.info, validate_data
+                    self.hass, self.host, self.info, user_input
                 )
             except InvalidAuthError:
                 errors["base"] = "invalid_auth"
@@ -177,9 +177,9 @@ class RefossConfigFlow(ConfigFlow, domain=DOMAIN):
             except (DeviceConnectionError, InvalidAuthError):
                 return self.async_abort(reason="reauth_unsuccessful")
 
-            validate_data = {**user_input, CONF_USERNAME: "admin"}
+            user_input[CONF_USERNAME] = "admin"
             try:
-                await async_validate_input(self.hass, host, info, validate_data)
+                await async_validate_input(self.hass, host, info, user_input)
             except (DeviceConnectionError, InvalidAuthError):
                 return self.async_abort(reason="reauth_unsuccessful")
             except MacAddressMismatchError:
