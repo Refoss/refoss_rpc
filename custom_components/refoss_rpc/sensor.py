@@ -301,6 +301,28 @@ REFOSS_SENSORS: Final = {
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
+      "em_total_energy": RefossSensorDescription(
+        key="em",
+        sub_key="total_energy",
+        name="Total Energy",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(status),
+        suggested_display_precision=2,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        supported=lambda status: status.get("total_energy") is not None,
+    ),
+      "em_total_ret_energy": RefossSensorDescription(
+        key="em",
+        sub_key="total_ret_energy",
+        name="Total Return Energy",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        value=lambda status, _: None if status is None else float(abs(status)),
+        suggested_display_precision=2,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        supported=lambda status: status.get("total_ret_energy") is not None,
+    ),
 }
 
 

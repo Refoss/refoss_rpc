@@ -52,3 +52,4 @@ Or click here: [![Add Integration](https://my.home-assistant.io/badges/config_fl
 | Refoss Smart Wi-Fi Switch, R21 | All |
 | Refoss Smart Energy Monitor, EM06P | All |
 | Refoss Smart Energy Monitor, EM16P | All |
+| Refoss Smart Energy Monitor, EM01P | All |
