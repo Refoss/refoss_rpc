@@ -36,16 +36,23 @@ class RefossCover(RefossEntity, CoverEntity):
     """Refoss cover entity."""
 
     _attr_device_class = CoverDeviceClass.SHUTTER
-    _attr_supported_features: CoverEntityFeature = (
-        CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.STOP
-    )
 
     def __init__(self, coordinator: RefossCoordinator, _id: int) -> None:
         """Initialize  cover."""
         super().__init__(coordinator, f"cover:{_id}")
         self._id = _id
-        if self.status["cali_state"] == "success":
-            self._attr_supported_features |= CoverEntityFeature.SET_POSITION
+
+    @property
+    def supported_features(self) -> CoverEntityFeature:
+        """Flag supported features."""
+        features = (
+            CoverEntityFeature.OPEN
+            | CoverEntityFeature.CLOSE
+            | CoverEntityFeature.STOP
+        )
+        if self.status.get("cali_state") == "success":
+            features |= CoverEntityFeature.SET_POSITION
+        return features
 
     @property
     def current_cover_position(self) -> int | None:

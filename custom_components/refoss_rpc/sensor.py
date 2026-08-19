@@ -369,19 +369,16 @@ class RefossSensor(RefossAttributeEntity, SensorEntity):
     def native_value(self) -> StateType:
         """Return value of sensor."""
         value = self.attribute_value
-        last = self._last_reported
 
-        # 数值缺失（设备不可用）：保留历史基准，返回 unavailable
+        if self.entity_description.state_class != SensorStateClass.TOTAL_INCREASING:
+            return value
+
+        last = self._last_reported
         if not isinstance(value, (int, float)):
             return None
 
-        if (
-            self.entity_description.state_class != SensorStateClass.TOTAL_INCREASING
-            or not isinstance(last, (int, float))
-            or last <= 0
-            or value >= last
-        ):
-            # 正常递增 / 无历史基准 / 非 total_increasing：直接放行。
+        if not isinstance(last, (int, float)) or last <= 0 or value >= last:
+            # 正常递增 / 无历史基准：直接放行。
             # 设备重启瞬态的恢复值也在此放行：
             # 低位被按住期间 last 未被拉低，恢复值 >= last 直接发布，
             # HA 只见 3.737 → 3.746，不会产生虚假尖峰。

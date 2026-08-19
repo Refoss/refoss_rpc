@@ -146,8 +146,11 @@ class RefossUpdateEntity(RefossAttributeEntity, UpdateEntity):
             ) from err
         except RpcCallError as err:
             raise HomeAssistantError(f"firmware update request error: {err!r}") from err
-        except InvalidAuthError:
+        except InvalidAuthError as err:
             await self.coordinator.async_shutdown_device_and_start_reauth()
+            raise HomeAssistantError(
+                f"firmware update authentication error: {err!r}"
+            ) from err
         else:
             self._ota_in_progress = True
             self._ota_progress_percentage = None
