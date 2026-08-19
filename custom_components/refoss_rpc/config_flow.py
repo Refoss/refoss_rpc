@@ -230,6 +230,8 @@ class RefossConfigFlow(ConfigFlow, domain=DOMAIN):
             )
         except DeviceConnectionError:
             return self.async_abort(reason="cannot_connect")
+        except MacAddressMismatchError:
+            return self.async_abort(reason="mac_address_mismatch")
 
         return await self.async_step_confirm_discovery()
 

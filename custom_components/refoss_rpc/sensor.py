@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 from typing import Final
 
@@ -345,6 +346,13 @@ class RefossSensor(RefossAttributeEntity, SensorEntity):
 
     entity_description: RefossSensorDescription
 
+    # 抖动容忍度，对齐 HA recorder 官方 10% 容差（0.9 阈值）：
+    # 回退幅度小于该比例视为固件抖动/舍入误差，保持上次值不发布
+    _JITTER_TOLERANCE = 0.1
+    # 疑似重置的确认窗口（秒），防护设备重启后短暂上报 0 值：
+    # 大幅下降需持续低位超过该时长才确认为真实周期重置并发布
+    _RESET_CONFIRM_SECONDS = 60
+
     def __init__(
         self,
         coordinator: RefossCoordinator,
@@ -354,8 +362,51 @@ class RefossSensor(RefossAttributeEntity, SensorEntity):
     ) -> None:
         """Initialize sensor."""
         super().__init__(coordinator, key, attribute, description)
+        self._last_reported: float | None = None
+        self._pending_reset_since: float | None = None
 
     @property
     def native_value(self) -> StateType:
         """Return value of sensor."""
-        return self.attribute_value
+        value = self.attribute_value
+
+        if self.entity_description.state_class != SensorStateClass.TOTAL_INCREASING:
+            return value
+
+        last = self._last_reported
+        if not isinstance(value, (int, float)):
+            return None
+
+        if not isinstance(last, (int, float)) or last <= 0 or value >= last:
+            # 正常递增 / 无历史基准：直接放行。
+            # 设备重启瞬态的恢复值也在此放行：
+            # 低位被按住期间 last 未被拉低，恢复值 >= last 直接发布，
+            # HA 只见 3.737 → 3.746，不会产生虚假尖峰。
+            self._pending_reset_since = None
+            self._last_reported = value
+            return value
+
+        # ---- value < last 且 last > 0：出现下降 ----
+        drop_ratio = (last - value) / last
+
+        # 场景1：小幅抖动（固件重算/舍入误差，降幅 < 10%）→ 保持上次值，
+        # 保证 total_increasing 语义下的严格递增，recorder 告警消失
+        if drop_ratio < self._JITTER_TOLERANCE:
+            return last
+
+        # 场景2：大幅下降（降幅 >= 10%）→ 疑似周期重置，进入确认窗口
+        now = time.monotonic()
+        if self._pending_reset_since is None:
+            # 首次见到低位：按住不发，开始计时
+            self._pending_reset_since = now
+            return last
+
+        if now - self._pending_reset_since < self._RESET_CONFIRM_SECONDS:
+            # 低位未持续足够久（设备重启瞬态通常数秒即恢复）：继续按住
+            return last
+
+        # 低位持续超过窗口 → 确认为真实周期重置（日/周/月归零），发布，
+        # HA 正常记录 reset，仅延迟一个确认窗口（60 秒）
+        self._pending_reset_since = None
+        self._last_reported = value
+        return value

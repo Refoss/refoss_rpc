@@ -121,16 +121,6 @@ class RefossEntity(CoordinatorEntity[RefossCoordinator]):
         """Device status by entity key."""
         return cast(dict, self.coordinator.device.status[self.key])
 
-    async def async_added_to_hass(self) -> None:
-        """When entity is added to HASS."""
-        await super().async_added_to_hass()
-        self.async_on_remove(self.coordinator.async_add_listener(self._update_callback))
-
-    @callback
-    def _update_callback(self) -> None:
-        """Handle device update."""
-        self.async_write_ha_state()
-
     async def call_rpc(self, method: str, params: Any) -> Any:
         """Call RPC method."""
         LOGGER.debug(
@@ -152,8 +142,12 @@ class RefossEntity(CoordinatorEntity[RefossCoordinator]):
                 f"Call RPC for {self.name} request error, method: {method}, params:"
                 f" {params}, error: {err!r}"
             ) from err
-        except InvalidAuthError:
+        except InvalidAuthError as err:
             await self.coordinator.async_shutdown_device_and_start_reauth()
+            raise HomeAssistantError(
+                f"Call RPC for {self.name} authentication error, method: {method},"
+                f" params: {params}, error: {err!r}"
+            ) from err
 
 
 class RefossAttributeEntity(RefossEntity):
@@ -196,17 +190,23 @@ class RefossAttributeEntity(RefossEntity):
                     self.entity_description.sub_key,
                 )
                 if self.entity_description.value is not None:
-                    return self.entity_description.value(val, self._last_value)
-
-                return val
+                    self._last_value = self.entity_description.value(
+                        val, self._last_value
+                    )
+                else:
+                    self._last_value = val
+                return self._last_value
 
             if self.sub_status is None:
                 return None
 
             if self.entity_description.value is not None:
-                return self.entity_description.value(self.sub_status, self._last_value)
-
-            return self.sub_status
+                self._last_value = self.entity_description.value(
+                    self.sub_status, self._last_value
+                )
+            else:
+                self._last_value = self.sub_status
+            return self._last_value
         except (KeyError, TypeError, ValueError) as e:
             # Log the exception
             LOGGER.debug(
