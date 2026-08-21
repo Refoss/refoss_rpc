@@ -348,7 +348,7 @@ class RefossSensor(RefossAttributeEntity, SensorEntity):
 
     # 抖动容忍度，对齐 HA recorder 官方 10% 容差（0.9 阈值）：
     # 回退幅度小于该比例视为固件抖动/舍入误差，保持上次值不发布
-    _JITTER_TOLERANCE = 0.1
+    _JITTER_TOLERANCE = 0.2
     # 疑似重置的确认窗口（秒），防护设备重启后短暂上报 0 值：
     # 大幅下降需持续低位超过该时长才确认为真实周期重置并发布
     _RESET_CONFIRM_SECONDS = 60
