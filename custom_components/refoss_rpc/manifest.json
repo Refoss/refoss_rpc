@@ -9,7 +9,7 @@
   "issue_tracker": "https://github.com/Refoss/refoss_rpc/issues",
   "loggers": ["aiorefoss"],
   "quality_scale": "bronze",
-  "requirements": ["aiorefoss==1.0.1"],
+  "requirements": ["aiorefoss==1.0.5"],
   "version": "1.0.9",
   "zeroconf": [
     {
