@@ -232,16 +232,6 @@ REFOSS_SENSORS: Final = {
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "emmerge_current": RefossSensorDescription(
-        key="emmerge",
-        sub_key="current",
-        name="Current",
-        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
-        value=lambda status, _: None if status is None else float(status),
-        suggested_display_precision=2,
-        device_class=SensorDeviceClass.CURRENT,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
     "emmerge_month_energy": RefossSensorDescription(
         key="emmerge",
         sub_key="month_energy",
