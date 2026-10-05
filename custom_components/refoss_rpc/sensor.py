@@ -377,6 +377,18 @@ class RefossSensor(RefossAttributeEntity, SensorEntity):
         if not isinstance(value, (int, float)):
             return None
 
+        # Startup has no in-memory baseline. Ignore a brief initial zero so
+        # recorder cannot mistake a reconnect placeholder for a counter reset.
+        # A genuinely unused or reset counter is accepted after the same
+        # confirmation window used for resets during normal operation.
+        if last is None and value == 0:
+            now = time.monotonic()
+            if self._pending_reset_since is None:
+                self._pending_reset_since = now
+                return None
+            if now - self._pending_reset_since < self._RESET_CONFIRM_SECONDS:
+                return None
+
         if not isinstance(last, (int, float)) or last <= 0 or value >= last:
             # 正常递增 / 无历史基准：直接放行。
             # 设备重启瞬态的恢复值也在此放行：
