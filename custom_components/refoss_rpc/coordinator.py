@@ -363,16 +363,17 @@ def get_refoss_coordinator_by_device_id(
     """Get a Refoss  device coordinator for the given device id."""
     dev_reg = dr.async_get(hass)
     if device := dev_reg.async_get(device_id):
-        for config_entry in device.config_entries:
-            entry = hass.config_entries.async_get_entry(config_entry)
-            if (
-                entry
-                and entry.state is ConfigEntryState.LOADED
-                and hasattr(entry, "runtime_data")
-                and isinstance(entry.runtime_data, RefossEntryData)
-                and (coordinator := entry.runtime_data.coordinator)
-            ):
-                return coordinator
+        if not device.config_entry_id:
+            return None
+        entry = hass.config_entries.async_get_entry(device.config_entry_id)
+        if (
+            entry
+            and entry.state is ConfigEntryState.LOADED
+            and hasattr(entry, "runtime_data")
+            and isinstance(entry.runtime_data, RefossEntryData)
+            and (coordinator := entry.runtime_data.coordinator)
+        ):
+            return coordinator
 
     return None
 
