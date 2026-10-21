@@ -176,7 +176,10 @@ def merge_channel_get_status(_status: dict[str, Any], key: str, attr: str) -> An
         if status_key in _status and attr in _status[status_key]:
             val += _status[status_key][attr]
         else:
+            # A partial sum looks like a plausible low reading and would be
+            # recorded as a counter reset for total_increasing sensors.
             LOGGER.warning("Missing key %s or attribute %s in status", status_key, attr)
+            return None
 
     return val
 
