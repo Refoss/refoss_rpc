@@ -16,10 +16,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import LOGGER
+from .const import DOMAIN, LOGGER
 from .coordinator import RefossConfigEntry, RefossCoordinator
 from .utils import (
     async_remove_refoss_entity,
+    get_refoss_channel_name,
     get_refoss_entity_name,
     get_refoss_key_instances,
     merge_channel_get_status,
@@ -104,9 +105,16 @@ class RefossEntity(CoordinatorEntity[RefossCoordinator]):
         """Initialize Refoss entity."""
         super().__init__(coordinator)
         self.key = key
-        self._attr_device_info = DeviceInfo(
-            connections={(CONNECTION_NETWORK_MAC, coordinator.mac)}
-        )
+        if key.startswith(("em:", "emmerge:")):
+            self._attr_device_info = DeviceInfo(
+                identifiers={(DOMAIN, f"{coordinator.mac}_{key}")},
+                via_device=(CONNECTION_NETWORK_MAC, coordinator.mac),
+                name=get_refoss_channel_name(coordinator.device, key),
+            )
+        else:
+            self._attr_device_info = DeviceInfo(
+                connections={(CONNECTION_NETWORK_MAC, coordinator.mac)}
+            )
         self._attr_unique_id = f"{coordinator.mac}-{key}"
         self._attr_name = get_refoss_entity_name(coordinator.device, key)
 
