@@ -34,6 +34,7 @@ PLATFORMS: Final = [
     Platform.BUTTON,
     Platform.COVER,
     Platform.EVENT,
+    Platform.NUMBER,
     Platform.SENSOR,
     Platform.SWITCH,
     Platform.UPDATE,
