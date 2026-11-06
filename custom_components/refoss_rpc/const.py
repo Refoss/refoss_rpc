@@ -6,6 +6,7 @@ from logging import Logger, getLogger
 from typing import Final
 
 DOMAIN: Final = "refoss_rpc"
+DEFAULT_PORT: Final = 80
 
 LOGGER: Logger = getLogger(__package__)
 

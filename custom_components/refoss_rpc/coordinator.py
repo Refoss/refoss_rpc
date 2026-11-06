@@ -21,6 +21,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import (
     ATTR_DEVICE_ID,
     CONF_HOST,
+    CONF_PORT,
     EVENT_HOMEASSISTANT_STOP,
     Platform,
 )
@@ -34,6 +35,7 @@ from .const import (
     ATTR_CHANNEL,
     ATTR_CLICK_TYPE,
     ATTR_DEVICE,
+    DEFAULT_PORT,
     ENTRY_RELOAD_COOLDOWN,
     EVENT_REFOSS_CLICK,
     INPUTS_EVENTS_TYPES,
@@ -44,7 +46,7 @@ from .const import (
     OTA_SUCCESS,
     REFOSS_CHECK_INTERVAL,
 )
-from .utils import get_host, update_device_fw_info
+from .utils import get_configuration_url, update_device_fw_info
 
 
 @dataclass
@@ -124,7 +126,10 @@ class RefossCoordinatorBase(DataUpdateCoordinator[None]):
             model=self.model,
             sw_version=self.sw_version,
             hw_version=self.hw_version,
-            configuration_url=f"http://{get_host(self.entry.data[CONF_HOST])}",
+            configuration_url=get_configuration_url(
+                self.entry.data[CONF_HOST],
+                self.entry.data.get(CONF_PORT, DEFAULT_PORT),
+            ),
         )
         self.device_id = device_entry.id
 

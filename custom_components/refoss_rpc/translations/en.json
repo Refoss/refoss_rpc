@@ -37,19 +37,23 @@
             },
             "reconfigure": {
                 "data": {
-                    "host": "Host"
+                    "host": "Host",
+                    "port": "Port"
                 },
                 "data_description": {
-                    "host": "The hostname or IP address of the Refoss device to connect to."
+                    "host": "The hostname or IP address of the Refoss device to connect to.",
+                    "port": "The HTTP and WebSocket port of the Refoss device. Defaults to 80."
                 },
                 "description": "Update configuration for {device_name}.\n\nBefore setup, devices must be connected to the network."
             },
             "user": {
                 "data": {
-                    "host": "Host"
+                    "host": "Host",
+                    "port": "Port"
                 },
                 "data_description": {
-                    "host": "The hostname or IP address of the Refoss device to connect to."
+                    "host": "The hostname or IP address of the Refoss device to connect to.",
+                    "port": "The HTTP and WebSocket port of the Refoss device. Defaults to 80."
                 },
                 "description": "Before setup, devices must be connected to the network.\n\nThis path can be configured for Refoss product models including R11,P11s, etc."
             }

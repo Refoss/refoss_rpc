@@ -16,6 +16,7 @@ from homeassistant.const import (
     CONF_HOST,
     CONF_MAC,
     CONF_PASSWORD,
+    CONF_PORT,
     CONF_USERNAME,
     Platform,
 )
@@ -28,6 +29,7 @@ from homeassistant.exceptions import (
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .coordinator import RefossConfigEntry, RefossCoordinator, RefossEntryData
+from .const import DEFAULT_PORT
 
 PLATFORMS: Final = [
     Platform.BINARY_SENSOR,
@@ -47,10 +49,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: RefossConfigEntry) -> bo
         raise ConfigEntryError("Invalid Host, please try again")
 
     options = ConnectionOptions(
-        entry.data.get(CONF_HOST),
-        entry.data.get(CONF_USERNAME),
-        entry.data.get(CONF_PASSWORD),
-        entry.data.get(CONF_MAC),
+        ip_address=entry.data[CONF_HOST],
+        username=entry.data.get(CONF_USERNAME),
+        password=entry.data.get(CONF_PASSWORD),
+        device_mac=entry.data.get(CONF_MAC),
+        port=entry.data.get(CONF_PORT, DEFAULT_PORT),
     )
 
     device = await RpcDevice.create(

@@ -14,7 +14,7 @@ from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from homeassistant.util.dt import utcnow
 
-from .const import DOMAIN, INPUTS_EVENTS_TYPES, LOGGER, UPTIME_DEVIATION
+from .const import DEFAULT_PORT, DOMAIN, INPUTS_EVENTS_TYPES, LOGGER, UPTIME_DEVIATION
 
 
 @callback
@@ -182,6 +182,14 @@ def merge_channel_get_status(_status: dict[str, Any], key: str, attr: str) -> An
             return None
 
     return val
+
+
+def get_configuration_url(host: str, port: int = DEFAULT_PORT) -> str:
+    """Return the device configuration URL."""
+    formatted_host = get_host(host)
+    if port == DEFAULT_PORT:
+        return f"http://{formatted_host}"
+    return f"http://{formatted_host}:{port}"
 
 
 def get_host(host: str) -> str:
