@@ -10,7 +10,7 @@
   "loggers": ["aiorefoss"],
   "quality_scale": "bronze",
   "requirements": ["aiorefoss==1.0.6"],
-  "version": "1.1.2-pre-release-2",
+  "version": "1.1.3",
   "zeroconf": [
     {
       "type": "_http._tcp.local.",

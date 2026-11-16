@@ -47,9 +47,6 @@ async def async_setup_entry(
     if not any(supported_model in model for supported_model in SUPPORTED_MODELS):
         return
 
-    # The input is always created for these models so the setting can be tested
-    # before every firmware reports push_interval.
-    push_interval: int | None = None
     try:
         config = await coordinator.device.call_rpc("Sys.Config.Get")
     except (DeviceConnectionError, InvalidAuthError, RpcCallError) as err:
@@ -58,16 +55,25 @@ async def async_setup_entry(
             coordinator.name,
             err,
         )
-    else:
-        device_config = config.get("device") if isinstance(config, dict) else None
-        if isinstance(device_config, dict) and "push_interval" in device_config:
-            push_interval = _parse_push_interval(device_config["push_interval"])
-            if push_interval is None:
-                LOGGER.warning(
-                    "Ignoring invalid push_interval %r returned by %s",
-                    device_config["push_interval"],
-                    coordinator.name,
-                )
+        return
+
+    device_config = config.get("device") if isinstance(config, dict) else None
+    if not isinstance(device_config, dict) or "push_interval" not in device_config:
+        LOGGER.debug(
+            "Data reporting interval is not supported by %s firmware %s",
+            coordinator.name,
+            coordinator.device.firmware_version,
+        )
+        return
+
+    push_interval = _parse_push_interval(device_config["push_interval"])
+    if push_interval is None:
+        LOGGER.warning(
+            "Ignoring invalid push_interval %r returned by %s",
+            device_config["push_interval"],
+            coordinator.name,
+        )
+        return
 
     async_add_entities([RefossDataReportingInterval(coordinator, push_interval)])
 
@@ -84,7 +90,7 @@ class RefossDataReportingInterval(RefossEntity, NumberEntity):
     _attr_native_unit_of_measurement = UnitOfTime.SECONDS
     _attr_translation_key = "data_reporting_interval"
 
-    def __init__(self, coordinator: RefossCoordinator, value: int | None) -> None:
+    def __init__(self, coordinator: RefossCoordinator, value: int) -> None:
         """Initialize the data reporting interval entity."""
         super().__init__(coordinator, "data_reporting_interval")
         self._attr_name = "Data reporting interval"
@@ -107,5 +113,20 @@ class RefossDataReportingInterval(RefossEntity, NumberEntity):
             "Sys.Config.Set",
             {"config": {"device": {"push_interval": interval}}},
         )
-        self._attr_native_value = interval
+
+        config = await self.call_rpc("Sys.Config.Get", None)
+        device_config = config.get("device") if isinstance(config, dict) else None
+        confirmed_interval = (
+            _parse_push_interval(device_config.get("push_interval"))
+            if isinstance(device_config, dict)
+            else None
+        )
+        if confirmed_interval != interval:
+            raise HomeAssistantError(
+                "The device did not apply the data reporting interval. "
+                f"Requested {interval} seconds, device returned "
+                f"{confirmed_interval!r}."
+            )
+
+        self._attr_native_value = confirmed_interval
         self.async_write_ha_state()
