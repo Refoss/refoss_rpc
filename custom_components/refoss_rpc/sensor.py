@@ -204,6 +204,7 @@ REFOSS_SENSORS: Final = {
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
+        create_if_missing=True,
     ),
     "em_day_ret_energy": RefossSensorDescription(
         key="em",
@@ -214,6 +215,7 @@ REFOSS_SENSORS: Final = {
         suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
+        create_if_missing=True,
     ),
     "em_pf": RefossSensorDescription(
         key="em",

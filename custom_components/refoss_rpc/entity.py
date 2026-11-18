@@ -57,7 +57,10 @@ def async_setup_entry_refoss(
             if (
                 not key.startswith("emmerge:")
                 and (
-                    description.sub_key not in key_status
+                    (
+                        description.sub_key not in key_status
+                        and not description.create_if_missing
+                    )
                     or not description.supported(key_status)
                 )
             ):
@@ -95,6 +98,7 @@ class RefossEntityDescription(EntityDescription):
     value: Callable[[Any, Any], Any] | None = None
     removal_condition: Callable[[dict, dict, str], bool] | None = None
     supported: Callable = lambda _: True
+    create_if_missing: bool = False
 
 
 class RefossEntity(CoordinatorEntity[RefossCoordinator]):
